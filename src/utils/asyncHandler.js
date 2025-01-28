@@ -26,8 +26,8 @@
 //async handler with promise method
 
 const asyncHandler =(requestHandler)=>{
-    return (rew,res,next)=>{
-        Promise.resolve(requestHandler(requestHandler,res,next))
+    return (req,res,next)=>{
+        Promise.resolve(requestHandler(req,res,next))
         .catch((err)=> {next(err)})
     }
 } 

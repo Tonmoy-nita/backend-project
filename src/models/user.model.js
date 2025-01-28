@@ -50,10 +50,10 @@ const userSchema = new Schema({
 
 userSchema.pre("save", async function(next){
     if(! this.isModified("password")) //ekhaen eta ho66e j jodi password modify na kora hoi tahole next middleware e chole jao
-    return next()
+    return next();
 
     //eta else part
-    this.password = bcrypt.hash(this.password,10)//else jodi password change or modify kora hoi then sei tike encrypt koro abong tarpor next middleware e jao 
+    this.password = await bcrypt.hash(this.password,10)//else jodi password change or modify kora hoi then sei tike encrypt koro abong tarpor next middleware e jao 
     next()
 })
 //ei method ti use hoi actual password abong je password enter kora hoye6e setar modhye compare kore check korar jonno
