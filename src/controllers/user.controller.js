@@ -10,8 +10,8 @@ const registerUser = asyncHandler( async(req,res)=>{
 
 
         const {fullName, email, username, password} =req.body
-        console.log("email :",email)
-        console.log("password :",password)
+        // console.log("email :",email)
+        // console.log("password :",password)
     
     //validation-not empty
 
@@ -21,14 +21,14 @@ const registerUser = asyncHandler( async(req,res)=>{
         {
             throw new ApiError(400,"All fields are required");    
         }
-        if([email].includes("@")===false){
-            throw new ApiError(400,"Email format is not correct.")
+        if (!email.includes("@")) {
+            throw new ApiError(400, "Email format is not correct.");
         }
     
     //check if user already exist : username,email
 
 
-        const existedUser=User.findOne({
+        const existedUser= await User.findOne({
             $or: [{email}, {username}],
         })
         if(existedUser){
@@ -37,10 +37,15 @@ const registerUser = asyncHandler( async(req,res)=>{
 
     //check for images,check for avtar(follow user schema jekahne user r ki ki lagbe seta deoa a6he so amader ka6e registration e user segulo di66e kina seta check kora)
     
-    
+        console.log(req.files)
     
         const avatarLocalPath = req.files?.avatar[0]?.path;
-        const coverImageLocalPath = req.files?.coverImage[0]?.path;
+        // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+        let coverImageLocalPath;
+        if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
+            coverImageLocalPath = req.files.coverImage[0].path
+        }
 
         if(!avatarLocalPath){
             throw new ApiError(400, "Avatar is required");
@@ -59,13 +64,13 @@ const registerUser = asyncHandler( async(req,res)=>{
     //create user object - create entry in db
     
     
-    const user =User.create({
+    const user = await User.create({
         fullName,
         avatar : avatar.url,
         coverImage : coverImage?.url || "",
         email,
         password,
-        username : username.toLowerCase()
+        username: username.toLowerCase()
     })
     
     //remove password and refresh token field from responce
@@ -85,9 +90,9 @@ const registerUser = asyncHandler( async(req,res)=>{
     //return responce
 
 
-        return res.status(201).json({
+        return res.status(201).json(
             new ApiResponce(200,createdUser,"User Registered Successfully")
-        })
+        )
 
 })
 
