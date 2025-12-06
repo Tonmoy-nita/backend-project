@@ -1,6 +1,6 @@
-import mongoose ,{Schema} from "mongoose";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import mongoose, { Schema } from "mongoose";
 
 
 const userSchema = new Schema({
@@ -24,6 +24,14 @@ const userSchema = new Schema({
         required : true,
         trim : true,
         index : true
+    },
+    channelName : {
+        type : String,
+        required : true,
+        trim : true,
+        default : function(){
+            return this.username || this.fullName;
+        }
     },
     avatar :{
         type :String,//here we use cloudnary url we upload image on cloudnary and then we get url of that image and use that here
